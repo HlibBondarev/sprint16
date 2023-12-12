@@ -2,6 +2,7 @@
 using Sprint16.Data;
 using Microsoft.EntityFrameworkCore;
 using Sprint16.Models;
+using Sprint16.Service;
 
 namespace Sprint16.Controllers
 {
@@ -16,13 +17,46 @@ namespace Sprint16.Controllers
         public Order SelectedOrder { get; set; }
         public async Task<IActionResult> Index(int? id)
         {
-            foreach (var order in _context.Orders)
-            {
-                order.Customers = _context.Customers.Find(order.CustomerId);
-                order.Supermarkets = _context.Supermarkets.Find(order.SupermarketId);
-            }
+
+            Order order = _context.Orders.Include(o => o.Customers).FirstOrDefault(o => o.CustomerId == id);
 
             return View(await _context.Orders.ToListAsync());
+        }
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Create(Order order)
+        {
+            return View(order);
+        }
+        public async Task<IActionResult> Edit(int id)
+        {
+            Order order = _context.Orders.Find(id);
+            if (order != null)
+            {
+                return View(order);
+            }
+
+            return View("NotExists");
+        }
+        public async Task<IActionResult> Delete(int id)
+        {
+            _context.Orders.Remove(_context.Orders.Find(id));
+            _context.SaveChanges();
+            return View();
+        }
+        public async Task<IActionResult> View(int id)
+        {
+            Order order = _context.Orders.Find(id);
+            if (order != null)
+            {
+                return View(order);
+            }
+
+            return View("NotExists");
         }
     }
 }
