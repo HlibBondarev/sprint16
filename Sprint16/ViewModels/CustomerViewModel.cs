@@ -6,7 +6,6 @@ namespace Sprint16.ViewModels
 {
     public class CustomerViewModel
     {
-        //public int Id { get; set; }
         [MaxLength(50)]
         [Display(Name = "First name")]
         public string Fname { get; set; }
@@ -16,6 +15,5 @@ namespace Sprint16.ViewModels
         [MaxLength(50)]
         public string Address { get; set; }
         public Discount Discount { get; set; }
-        //public SelectList Discount/*SelectList*/ { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model Sprint16.ViewModels.CustomerViewModel
+﻿@model Sprint16.ViewModels.SupermarketViewModel
 
 @{
 	ViewData["Title"] = "Delete";
@@ -7,7 +7,7 @@
 <h1>View</h1>
 
 <div>
-	<h4>Customer</h4>
+	<h4>Supermarket</h4>
 	<hr />
 	<h2>Delete</h2>
 	<p class="text-danger">@ViewData["ErrorMessage"]</p>
@@ -16,16 +16,10 @@
 		<form asp-action="Delete">
 			<dl class="row">
 				<dt class="col-sm-2">
-					@Html.DisplayNameFor(model => model.Fname)
+					@Html.DisplayNameFor(model => model.Name)
 				</dt>
 				<dd class="col-sm-10">
-					@Html.DisplayFor(model => model.Fname)
-				</dd>
-				<dt class="col-sm-2">
-					@Html.DisplayNameFor(model => model.Lname)
-				</dt>
-				<dd class="col-sm-10">
-					@Html.DisplayFor(model => model.Lname)
+					@Html.DisplayFor(model => model.Name)
 				</dd>
 				<dt class="col-sm-2">
 					@Html.DisplayNameFor(model => model.Address)
@@ -33,14 +27,7 @@
 				<dd class="col-sm-10">
 					@Html.DisplayFor(model => model.Address)
 				</dd>
-				<dt class="col-sm-2">
-					@Html.DisplayNameFor(model => model.Discount)
-				</dt>
-				<dd class="col-sm-10">
-					@Html.DisplayFor(model => model.Discount)
-				</dd>
 			</dl>
-			<br />
 			<div class="form-group">
 				<input type="submit" value="Delete" class="btn btn-primary" />
 			</div>

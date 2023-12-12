@@ -17,7 +17,6 @@ namespace Sprint16.Controllers
 		{
 			_context = context;
 			unitOfWork = new UnitOfWork(context);
-
 		}
 
 		// TODO: + Add the ability to sort the list of customers by the last name or address (in descending and ascending order)
@@ -42,9 +41,10 @@ namespace Sprint16.Controllers
 					customers = customers.OrderBy(s => s.Lname);
 					break;
 			}
-			return View(customers.ToList());
+			return View(customers/*.ToList()*/);
 		}
 
+		// TODO: + CRUD for Customers
 		[HttpGet]
 		public IActionResult Create()
 		{
@@ -153,7 +153,6 @@ namespace Sprint16.Controllers
 			Customer customer = await unitOfWork.Customers.Get((int)id);
 			if (customer == null)
 				return NotFound();
-			ViewBag.CustomerId = id;
 			if (saveChangesError.GetValueOrDefault())
 			{
 				ViewData["ErrorMessage"] =
