@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Sprint16.Data;
+using Sprint16.Models;
+using Sprint16.Repository;
 using Sprint16.Service;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -24,6 +26,7 @@ namespace Sprint16
             services.AddMvc();
             services.AddControllersWithViews();
             services.AddScoped<IDataService, DataService>();
+
             //services.AddRouting();
         }
 

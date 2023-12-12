@@ -1,7 +1,7 @@
-﻿@model IEnumerable<Sprint16.Models.Order>
+﻿@model Sprint16.Models.ViewModels.OrderIndexData
 
 @{
-	ViewData["Title"] = "View";
+    ViewData["Title"] = "Order";
 }
 
 <h1>Orders</h1>
@@ -13,30 +13,32 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.OrderDate)
+                OrderData
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Customers)
+                Customer
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Supermarkets)
+                SuperMarket
             </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Orders)
         {
-            <tr>
+            <tr >
                 <th>
                     @Html.DisplayFor(model => item.OrderDate)
                 </th>
                 <th>
                     @Html.DisplayFor(model => item.Customers.Fname)
+                    @Html.DisplayFor(model => item.Customers.Lname)
                 </th>
                 <th>
                     @Html.DisplayFor(model => item.Supermarkets.Name)
                 </th>
                 <td>
+                    @* <a asp-action="Index" asp-route-id="@item.Id">Select</a> | *@
                     @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
                     @Html.ActionLink("Details", "View", new { id = item.Id }) |
                     @Html.ActionLink("Delete", "Delete", new { id = item.Id })
@@ -45,3 +47,43 @@
         }
     </tbody>
 </table>
+@* @* //@if (Model.OrderDetails != null) *@
+@* //{ *@
+    <h3>Order Details</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Products
+                </th>
+                <th>
+                    Quantity
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.OrderDetails)
+            {
+                string selctedRow = "";
+                if (item.Id == 1)
+                {
+                    selctedRow = "success";
+                }
+                <tr class="@selctedRow">
+                    <td>
+                        @Html.ActionLink("Select", "Index", new {id = item.OrderId})
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.Product)
+                        @Html.DisplayFor(model => item.Quantity)
+                    </td>
+                    <td>
+                        <a asp-action="Index" asp-route-id="@item.Id">Select</a> |
+                        @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                        @Html.ActionLink("Details", "Index", new { id = item.Id }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
