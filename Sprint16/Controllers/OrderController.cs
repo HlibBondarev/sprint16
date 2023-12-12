@@ -12,8 +12,16 @@ namespace Sprint16.Controllers
         {
             _context = context;
         }
-        public async Task<IActionResult> Index()
+        public List<Order> Orders { get; set; }
+        public Order SelectedOrder { get; set; }
+        public async Task<IActionResult> Index(int? id)
         {
+            foreach (var order in _context.Orders)
+            {
+                order.Customers = _context.Customers.Find(order.CustomerId);
+                order.Supermarkets = _context.Supermarkets.Find(order.SupermarketId);
+            }
+
             return View(await _context.Orders.ToListAsync());
         }
     }
