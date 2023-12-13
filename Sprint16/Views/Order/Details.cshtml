@@ -1,0 +1,43 @@
+﻿@model IEnumerable<Sprint16.Models.Order>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Order Details</h2>
+
+<table class="table">
+
+    <thead>
+        <tr>
+            <th>
+                Products
+            </th>
+            <th>
+                Quantity
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                @foreach (var details in order.OrderDetails)
+                {
+                    
+                <td>
+                        @Html.DisplayFor(modelItem => details.Product.Name)
+                </td>
+                <td>
+                        @Html.DisplayFor(modelItem => details.Quantity)
+                </td>
+                <td>
+                        <a asp-action="EditDetails" asp-route-id="@details.Id">Edit</a> |
+                        <a asp-action="DeleteDetails" asp-route-id="@details.Id">Delete</a>
+                </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

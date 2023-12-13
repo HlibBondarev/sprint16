@@ -1,4 +1,4 @@
-﻿@* @model Sprint16.Models.Order
+﻿@model Sprint16.Models.Order
 
 @{
     ViewData["Title"] = "Create";
@@ -6,33 +6,49 @@
 
 <h1>Create</h1>
 
-<h4>User</h4>
+<h4>Order</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" readonly />
+                <label asp-for="Customers.Fname" class="control-label"></label>
+                <input asp-for="Customers.Fname" class="form-control" asp-items="ViewBag.Customers"></input>
             </div>
+            <p></p>
             <div class="form-group">
-                <label asp-for="Address" class="control-label"></label>
-                <input asp-for="Address" class="form-control" readonly />
+                <label asp-for="Customers.Lname" class="control-label"></label>
+                <input asp-for="Customers.Lname" class="form-control" asp-items="ViewBag.Customers"></input>
             </div>
+            <p></p>
             <div class="form-group">
-                <label asp-for="Orders" class="control-label"></label>
-                <input asp-for="Orders" class="form-control" readonly />
+                <label asp-for="Supermarkets.Name" class="control-label"></label>
+                <input asp-for="Supermarkets.Name" class="form-control" asp-items="ViewBag.Supermarkets"></input>
             </div>
+            <p></p>
+            <div class="form-group">
+                <label asp-for="Supermarkets.Address" class="control-label"></label>
+                <input asp-for="Supermarkets.Address" class="form-control" asp-items="ViewBag.Supermarkets"></input>
+            </div>
+            <p></p>
+            <div class="form-group">
+                <label asp-for="OrderDate" class="control-label"></label>
+                <input asp-for="OrderDate" class="form-control" />
+                <span asp-validation-for="OrderDate" class="text-danger"></span>
+            </div>
+            <p></p>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
-
+<p></p>
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
 
- *@
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

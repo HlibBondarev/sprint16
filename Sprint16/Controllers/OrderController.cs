@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sprint16.Data;
 using Microsoft.EntityFrameworkCore;
+using Sprint16.Data;
 using Sprint16.Models;
-using Sprint16.Service;
 using Sprint16.Repository;
-using Sprint16.Models.ViewModels;
 
 namespace Sprint16.Controllers
 {
@@ -12,80 +10,137 @@ namespace Sprint16.Controllers
     {
         private readonly ShoppingContext _context;
         private readonly UnitOfWork unitOfWork;
-
         public OrderController(ShoppingContext context)
         {
             _context = context;
             unitOfWork = new UnitOfWork(context);
         }
-        public async Task<IActionResult> Index(int id, int orderId)
+        public async Task<IActionResult> Index(int? id)
         {
-            var viewModel = new OrderIndexData();
-            viewModel.Orders = await _context.Orders
-                .Include(o => o.OrderDetails)
-                .Include(c => c.Customers)
-                .Include(s => s.Supermarkets)
-                .ToListAsync();
-            viewModel.OrderDetails = await _context.OrderDetails
-                .Include(p => p.Product)
-                .Include(o => o.Order)
-                .ToListAsync();
+            //var order = await _context.Orders
+            //    .Include(od => od.OrderDetails)
+            //        .ThenInclude(p => p.Product)
+            //        .AsNoTracking()
+            //        .ToListAsync();
+            //if (order == null)
+            //    return NotFound();
 
-            //if (id != null)
-            //{
-            //    ViewData["OrderId"] = id.Value;
-            //    Order order = viewModel.Orders.Where(i => i.Id == id.Value).Single();
-            //}
-            return View(viewModel);
-            //foreach (var order in _context.OrderDetails)
-            //{
-            //    order.Product = await unitOfWork.Products.Get(order.ProductId);
-            //    order.Order = await unitOfWork.Orders.Get(order.OrderId);
-            //}
-            //foreach (var item in _context.Orders)
-            //{
-            //    item.Customers = await unitOfWork.Customers.Get(item.CustomerId);
-            //    item.Supermarkets = await unitOfWork.Supermarkets.Get(item.SupermarketId);
-            //}
-
-            //return View(await Order.ToListAsync());
+            //return View(order);
+            return View(await _context.Orders.Include(c => c.Customers).Include(s => s.Supermarkets).ToListAsync());
         }
-        //[HttpGet]
-        //public async Task<IActionResult> Create()
-        //{
-        //    return View();
-        //}
-        //[HttpPost]
-        //public async Task<IActionResult> Create(Order order)
-        //{
-        //    return View(order);
-        //}
-        //public async Task<IActionResult> Edit(int id)
-        //{
-        //    Order order = _context.Orders.Find(id);
-        //    if (order != null)
-        //    {
-        //        return View(order);
-        //    }
-
-        //    return View("NotExists");
-        //}
-        //public async Task<IActionResult> Delete(int id)
-        //{
-        //    _context.Orders.Remove(_context.Orders.Find(id));
-        //    _context.SaveChanges();
-        //    return View();
-        //}
-        public async Task<IActionResult> View(int id)
+        public async Task<IActionResult> Details(int? id)
         {
-            OrderDetails orderDetails = _context.OrderDetails.Find();
+            if (id == null)
+                return NotFound();
 
+            var order = await _context.Orders
+                .Where(o => o.Id == id)
+                .Include(od => od.OrderDetails)
+                    .ThenInclude(p => p.Product)
+                    .AsNoTracking()
+                    .ToListAsync();
+            if (order == null)
+                return NotFound();
+
+            return View(order);
+        }
+        public IActionResult View()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Create(Order order)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    await unitOfWork.Orders.Create(order);
+                    _context.SaveChanges();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError("", "Unable to save changes. " +
+                    "Try again, and if the problem persists " +
+                    "see your system administrator.");
+            }
+            return View(order);
+        }
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View("Create");
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(Order order)
+        {
+            try
+            {
+                await unitOfWork.Orders.Update(order);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException)
+            {
+                //Log the error (uncomment ex variable name and write a log.)
+                ModelState.AddModelError("", "Unable to save changes. " +
+                    "Try again, and if the problem persists, " +
+                    "see your system administrator.");
+            }
+            return View(order);
+        }
+        public async Task<IActionResult> Edit(int id)
+        {
+            var orderToUpdate = await unitOfWork.Orders.Get(id);
+
+            return View(orderToUpdate);
+        }
+        public async Task<IActionResult> Delete(int id)
+        {
+            if (id != 0)
+            {
+                await unitOfWork.Orders.Delete(id);
+                return RedirectToAction(nameof(Index));
+            }
+            return NotFound();
+        }
+        [HttpPost]
+        public async Task<IActionResult> EditDetails(OrderDetails orderDetails)
+        {
             if (ModelState.IsValid)
             {
-                return View(orderDetails);
+                try
+                {
+                    await unitOfWork.OrdersDetails.Update(orderDetails);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException)
+                {
+                    //Log the error (uncomment ex variable name and write a log.)
+                    ModelState.AddModelError("", "Unable to save changes. " +
+                        "Try again, and if the problem persists, " +
+                        "see your system administrator.");
+                }
             }
+            return View(orderDetails);
+        }
+        public async Task<IActionResult> EditDetails(int id)
+        {
+            var orderToUpdate = await unitOfWork.OrdersDetails.Get(id);
 
-            return View("NotExists");
+            return View(orderToUpdate);
+        }
+        public async Task<IActionResult> DeleteDetails(int id)
+        {
+            if (id != 0)
+            {
+                await unitOfWork.OrdersDetails.Delete(id);
+                return RedirectToAction(nameof(Index));
+            }
+            return NotFound();
         }
     }
 }
